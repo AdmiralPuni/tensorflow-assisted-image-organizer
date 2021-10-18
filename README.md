@@ -1,35 +1,33 @@
-# Tensorflow Assisted Image Organizer
+# Tensorflow Assisted Image Organizer | TAIO
  Reducing the amount of work needed to sort out jumbled images in a folder.
- 
- 
 
-https://user-images.githubusercontent.com/42926364/137637063-355fa517-d5e0-45ab-a31d-87f5583c0b33.mp4
+https://user-images.githubusercontent.com/42926364/137741853-e7d37463-7f1a-4c77-862f-fd607a3f6900.mp4
 
-
- 
  Files to run:
- 1. char_2_offline.py | Terminal only
- 2. char-gui-2.py | Simple GUI but it still uses terminal for input
+ 1. char-2-offline.py | Terminal only displays image with plt/mathplotlib
+ 2. char-2-gui.py | Currently the terminal achieves the same goal as the gui, more work will be needed
  
- The model provided is trained to be used on three anime character and the program is hardcoded to do so:
-  1. Cirno
-  2. Gabriel Tenma White
-  3. Kujou Karen
+ This program comes with two pre trained model:
+  - sample
+    - Cirno, Gabriel, Karen
+    - models/model_weights_saved_char.hdf5
+  - hololive-en : 
+    - Ame, Gura, Ina, Mori, Kiara
+    - models/model-hololive-en.hdf5
 
-You will need to modify the program and change the model to it according to your custom category.
+ However you can add your own custom model, add a new model decription in settings.json follow the examples, the training notebook is included in  char-2.ipynb simply download the model and move it to /models.
+
+Important Files | Description
+------------ | -------------
+char-2-offline.py | Main Program
+char-2-gui.py | The program but with easier to operate GUI
+char-2.ipynb | Jupyter notebook to train the models
 
 Imports
-* tensorflow
-* PIL
+* tensorflow.keras
+* json
 * tkinter (char-gui-2)
 * os
 * shutil
-* numpy
 * keras.preprocessing
 * matplotlib.pyplot
-
-Knows issues:
-* GUI Stretched image
-* GUI not fully working
-* GUI Code and terminal code is different, gui needs to somehow load the other file
-* Class naming is currently manual
