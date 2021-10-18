@@ -1,0 +1,23 @@
+{
+    "id": 134,
+    "models": {
+        "sample": {
+            "names": [
+                "cirno",
+                "gab",
+                "karen"
+            ],
+            "filename": "model_weights_saved_char.hdf5"
+        },
+        "hololive-en": {
+            "names": [
+                "ame",
+                "gura",
+                "ina",
+                "kiara",
+                "mori"
+            ],
+            "filename": "model-hololive-en.hdf5"
+        }
+    }
+}
