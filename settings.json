@@ -18,6 +18,20 @@
                 "mori"
             ],
             "filename": "model-hololive-en.hdf5"
+        },
+        "myusu": {
+            "names": [
+                "eli",
+                "hanayo",
+                "honoka",
+                "kotori",
+                "maki",
+                "nico",
+                "nozomi",
+                "rin",
+                "umi"
+            ],
+            "filename": "model-myusu.hdf5"
         }
     }
 }

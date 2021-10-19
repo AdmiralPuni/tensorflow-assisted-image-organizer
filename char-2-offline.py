@@ -58,7 +58,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam')
 def user_decision(detected_class, filename, accuracy):
   print("Detected  :", character_names[detected_class])
   print("Accuracy  :", round(accuracy)*100)
-  if input("y/n       : ") == "y":
+  if input("3=true    : ") == "3":
     copyfile(path, "output/" + selected_model + '/' + character_names[detected_class] + "/" + filename)
   else:
     copyfile(path, "output/" + selected_model + '/false/' + filename)
