@@ -32,6 +32,14 @@
                 "umi"
             ],
             "filename": "model-myusu.hdf5"
+        },
+        "rinpana": {
+            "names": [
+                "hanayo",
+                "rin",
+                "rinpana"
+            ],
+            "filename": "model-rinpana.hdf5"
         }
     }
 }
