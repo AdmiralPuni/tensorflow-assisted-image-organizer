@@ -79,7 +79,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 def user_decision(detected_class, filename):
   print("Detected  :", character_names[detected_class])
-  plt.xlabel(character_names[detected_class].upper(), fontsize=30)
+  plt.title(character_names[detected_class].upper(), fontsize=24)
   if input("3=true    : ") == "3":
     move(os.path.join(input_directory, filename), output_directory + "/" + selected_model + '/' + character_names[detected_class] + "/" + filename)
 #load saved model
