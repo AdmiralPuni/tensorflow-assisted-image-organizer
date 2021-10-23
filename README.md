@@ -5,15 +5,35 @@
 
 https://user-images.githubusercontent.com/42926364/138214467-9bfe112d-d3ad-49f1-851b-d0ef09e95649.mp4
 
-
-
+ ## Running The Program
+ Example : taio.py -i input -o output -m myusu -s
+ 
+ ### Mandatory arguments
+ Option | Description | Example
+ ------------ | ------------- | ------------- 
+ -i | Input directory | input
+ -o | Output directory | output
+ -m | Model name | myusu
+ Choose one
+ -s | Supervised decision, a choice will appear when character is detected | 
+ -a | Unsupervised, detections are automatically moved to output folder | 
+ 
+ ### Information arguments
+ Option | Description
+ ------------ | -------------
+ -h | Show help
+ -l | List models in settings.json
+ 
  ## Models
   - sample
     - Cirno, Gabriel, Karen
     - models/model_weights_saved_char.hdf5
   - hololive-en : 
     - Ame, Gura, Ina, Mori, Kiara
-    - models/model-hololive-en.hdf5
+    - models/model-hololive-en-faces.hdf5
+  - μ's/myusu : 
+    - Eli, Hanayo, Honoka, Kotori, Maki, Nico, Nozomi, Rin, Umi
+    - models/model-myusu.hdf5
 
  You can add your own custom model, add a new model decription in settings.json follow the examples, the training notebook is included in  char-2.ipynb simply download the model and move it to /models. Tutorial will be added soon into the jupyter notebook(char-2.ipynb)
 
