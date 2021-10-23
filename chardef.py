@@ -74,6 +74,8 @@ def get_name(cropped_image):
   
   return character_names[largest]
 
+
+
 #for filename in os.listdir(input_directory):
   #path = os.path.join(input_directory, filename)
   #img = image.load_img(path, target_size=(150, 150))

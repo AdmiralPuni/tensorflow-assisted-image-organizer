@@ -1,5 +1,4 @@
 {
-    "id": 134,
     "models": {
         "sample": {
             "names": [
@@ -18,6 +17,16 @@
                 "mori"
             ],
             "filename": "model-hololive-en.hdf5"
+        },
+        "hololive-en-faces": {
+            "names": [
+                "ame",
+                "gura",
+                "ina",
+                "kiara",
+                "mori"
+            ],
+            "filename": "model-hololive-en-faces.hdf5"
         },
         "myusu": {
             "names": [

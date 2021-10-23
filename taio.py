@@ -23,6 +23,10 @@ from random import randrange
 
 import chardef
 
+plt.ion()
+plt.show()
+plt.imshow(chardef.image.load_img('logpu.png', target_size=(150, 150)))
+
 def draw_bounding_box_on_image(image, ymin, xmin, ymax, xmax, color, font, thickness=4, display_str_list=()):
   """Adds a bounding box to an image."""
   draw = ImageDraw.Draw(image)
@@ -78,11 +82,11 @@ def draw_boxes(image, boxes, class_names, scores, max_boxes=10, min_score=0.2):
       if class_names[i].decode("ascii") == "Human face":
         ymin, xmin, ymax, xmax = tuple(boxes[i])
         
-        color = colors[hash(class_names[i]) % len(colors)]
+        color = ImageColor.getrgb('#6AE670')
         image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
         detected_names.append(crop_image(image_pil, ymin, xmin, ymax, xmax))
 
-        display_str = "{}: {}%".format(detected_names[-1], int(100 * scores[i]))
+        display_str = "{}: {}%".format(detected_names[-1] + ' | Face', int(100 * scores[i]))
         
         draw_bounding_box_on_image(image_pil, ymin, xmin, ymax, xmax, color, font, display_str_list=[display_str])
         
@@ -100,11 +104,6 @@ def load_img(path):
   img = tf.io.read_file(path)
   img = tf.image.decode_jpeg(img, channels=3)
   return img
-
-def display_image(image):
-  fig = plt.figure(figsize=(20, 15))
-  plt.grid(False)
-  plt.imshow(image)
 
 class prediction:
   def __init__(self, path, names, image):
@@ -127,10 +126,9 @@ def run_detector(detector, path):
       img.numpy(), result["detection_boxes"],
       result["detection_class_entities"], result["detection_scores"])
 
-
   return prediction(path, detected_names, image_with_boxes)
-  #display_image(image_with_boxes)
 
+print("Running detections...")
 for filename in tqdm(os.listdir('input')):
   if filename.endswith(".jpg") or filename.endswith(".png"):
     path = os.path.join('input', filename)
@@ -143,13 +141,11 @@ def user_decision(detected_names):
   plt.title(set(detected_names), fontsize=24)
   input("3=true    : ")
 
-plt.ion()
-plt.show()
-plt.imshow(chardef.image.load_img('logpu.png', target_size=(150, 150)))
+
 
 for list in prediction_list:
   print('==============================================')
-  print('Path      : ', list.path)
+  #print('Path      : ', list.path)
   plt.imshow(list.image)
   user_decision(list.names)
 
