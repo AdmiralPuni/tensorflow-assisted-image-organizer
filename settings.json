@@ -40,6 +40,13 @@
                 "rinpana"
             ],
             "filename": "model-rinpana.hdf5"
+        },
+        "rh": {
+            "names": [
+                "hanayo",
+                "rin"
+            ],
+            "filename": "model-rh.hdf5"
         }
     }
 }
