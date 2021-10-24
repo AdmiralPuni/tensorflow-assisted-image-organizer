@@ -10,9 +10,10 @@ https://user-images.githubusercontent.com/42926364/138587989-b45a9d30-3587-4b2d-
 
 
 ## Running The Program
+
 Example : taio.py -i input -o output -m myusu -s
 
-## Installation
+### Installation
 
 Name | Method 
 ------------ | -------------
@@ -26,17 +27,19 @@ numpy | pip
 PIL | pip
 shutil | pip
 
-### Mandatory arguments
+### Arguments
+
+#### Mandatory arguments
 Option | Description | Example
 ------------ | ------------- | ------------- 
 -i | Input directory | input
 -o | Output directory | output
 -m | Model name | myusu
-Choose one
+Choose one | - | -
 -s | Supervised decision, a choice will appear when character is detected | 
 -a | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
 
-### Information arguments
+#### Information arguments
 Option | Description
 ------------ | -------------
 -h | Show help
