@@ -12,6 +12,20 @@ https://user-images.githubusercontent.com/42926364/138587989-b45a9d30-3587-4b2d-
 ## Running The Program
 Example : taio.py -i input -o output -m myusu -s
 
+## Installation
+
+Name | Method 
+------------ | -------------
+python 3.9 | Windows installation
+tensorflow | pip
+tensorflow_hub | pip
+matplotlib | pip 
+keras | pip
+tqdm | pip
+numpy | pip
+PIL | pip
+shutil | pip
+
 ### Mandatory arguments
 Option | Description | Example
 ------------ | ------------- | ------------- 
@@ -48,12 +62,11 @@ taio.py | Main program | Detect faces categorize it
 cropper.py | Face cropper | Crop faces in images and saves it, used for making models
 char-2.ipynb | Jupyter notebook to train the models | images needs to be separated in a zip file and structured "modelname/train/character" and "modelname/test/character"
 
-## Imports
-* tensorflow.keras
-* json
-* tkinter (char-gui-2)
-* os
-* shutil
-* keras.preprocessing
-* matplotlib.pyplot
+## TODO
+ - Model generalization / submodel detection
+   - New detection method, run the image to general model then to the submodel
+ - Help argument
+ - Handling error when running without argument
+ - Matplotlib image load slows down decision making process
+ - Overall program optimization
 
