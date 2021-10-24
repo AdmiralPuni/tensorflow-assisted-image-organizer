@@ -24,6 +24,7 @@ shutil | pip
 ### Arguments
 
 #### Mandatory arguments
+
 Option | Description | Example
 ------------ | ------------- | ------------- 
 "-i" | Input directory | input
@@ -34,6 +35,7 @@ Choose one | "-" | "-"
 "-a" | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
 
 #### Information arguments
+
 Option | Description
 ------------ | -------------
 "-h" | Show help
