@@ -26,18 +26,18 @@ shutil | pip
 #### Mandatory arguments
 Option | Description | Example
 ------------ | ------------- | ------------- 
--i | Input directory | input
--o | Output directory | output
--m | Model name | myusu
-Choose one | - | -
--s | Supervised decision, a choice will appear when character is detected | 
--a | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
+"-i" | Input directory | input
+"-o" | Output directory | output
+"-m" | Model name | myusu
+Choose one | "-" | "-"
+"-s" | Supervised decision, a choice will appear when character is detected | 
+"-a" | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
 
 #### Information arguments
 Option | Description
 ------------ | -------------
--h | Show help
--l | List models in settings.json
+"-h" | Show help
+"-l" | List models in settings.json
 
 ## Models
 
