@@ -1,11 +1,29 @@
+# TAIO | Tensorflow Assisted Image Organizer 
 Reducing the amount of work needed to sort out jumbled images in a folder.
 
-![unknown_2021 10 24-15 59](https://user-images.githubusercontent.com/42926364/138588543-d8338a9f-36e4-4037-9255-b04023477bb3.png)
+![unknown_2021 10 24-15 59](https://user-images.githubusercontent.com/42926364/138587802-1dab8452-e8d6-462e-823d-8c0a417b9b99.png)
 
 ## Running The Program
+
 Example : taio.py -i input -o output -m myusu -s
 
-### Mandatory arguments
+### Installation
+
+Name | Method 
+------------ | -------------
+python 3.9 | Windows installation
+tensorflow | pip
+tensorflow_hub | pip
+matplotlib | pip 
+keras | pip
+tqdm | pip
+numpy | pip
+PIL | pip
+shutil | pip
+
+### Arguments
+
+#### Mandatory arguments
 Option | Description | Example
 ------------ | ------------- | ------------- 
 -i | Input directory | input
@@ -15,7 +33,7 @@ Choose one | - | -
 -s | Supervised decision, a choice will appear when character is detected | 
 -a | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
 
-### Information arguments
+#### Information arguments
 Option | Description
 ------------ | -------------
 -h | Show help
@@ -23,7 +41,7 @@ Option | Description
 
 ## Models
 
- Name | Characters | File
+Name | Characters | File
 ------------ | ------------- | ------------- 
 μ's | models/model-myusu.hdf5 | Eli, Hanayo, Honoka, Kotori, Maki, Nico, Nozomi, Rin, Umi
 Hololive EN Gen-1 | models/model-hololive-en-faces.hdf5 | Ame, Gura, Ina, Mori, Kiara
@@ -41,11 +59,11 @@ taio.py | Main program | Detect faces categorize it
 cropper.py | Face cropper | Crop faces in images and saves it, used for making models
 char-2.ipynb | Jupyter notebook to train the models | images needs to be separated in a zip file and structured "modelname/train/character" and "modelname/test/character"
 
-## Imports
-* tensorflow.keras
-* json
-* tkinter (char-gui-2)
-* os
-* shutil
-* keras.preprocessing
-* matplotlib.pyplot
+## TODO
+ - Model generalization / submodel detection
+   - New detection method, run the image to general model then to the submodel
+ - Help argument
+ - Handling error when running without argument
+ - Matplotlib image load slows down decision making process
+ - Overall program optimization
+
