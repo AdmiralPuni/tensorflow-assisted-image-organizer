@@ -28,6 +28,43 @@
             ],
             "filename": "model-hololive-en-faces.hdf5"
         },
+        "hololive": {
+            "names": [
+                "akai-haato",
+                "amane-kanata",
+                "gawr-gura",
+                "himemori-luna",
+                "hoshimachi-suisei",
+                "houshou-marine",
+                "inugami-korone",
+                "kiryu-coco",
+                "minato-aqua",
+                "momosuzu-nene",
+                "mori-calliope",
+                "murasaki-shion",
+                "nakiri-ayame",
+                "natsuiro-matsuri",
+                "nekomata-okayu",
+                "ninomae_inanis",
+                "ookami-mio",
+                "oozora-subaru",
+                "ouro-kroni",
+                "sakura-miko",
+                "shirakami-fubuki",
+                "shiranui-flare",
+                "shirogane-noel",
+                "shishiro-botan",
+                "takanashi-kiara",
+                "tokino-sora",
+                "tokoyami-towa",
+                "tsunomaki-watame",
+                "uruha-rushia",
+                "usada-pekora",
+                "watson-amelia",
+                "yukihana-lamy"
+            ],
+            "filename": "model-hololive.hdf5"
+        },
         "myusu": {
             "names": [
                 "eli",

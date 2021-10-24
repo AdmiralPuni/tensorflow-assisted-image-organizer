@@ -58,7 +58,7 @@ def main(argv):
       self.image = image
 
   try:
-    opts, args = getopt.getopt(argv, "hli:o:m:s:a", ["i=", "o=", "m="])
+    opts, args = getopt.getopt(argv, "hli:o:m:sa", ["i=", "o=", "m="])
   except getopt.GetoptError:
     print('test.py -i <input_directoryfile> -o <output_directory>')
     sys.exit(2)
@@ -89,9 +89,9 @@ def main(argv):
   character_names = settings_json['models'][selected_model]['names']
   model_filename = settings_json['models'][selected_model]['filename']
 
-  for name in character_names:
-    if not os.path.exists(output_directory + '/' + selected_model + '/' + name):
-      os.makedirs(output_directory + '/' + selected_model + '/' + name)
+  #for name in character_names:
+  #  if not os.path.exists(output_directory + '/' + selected_model + '/' + name):
+  #    os.makedirs(output_directory + '/' + selected_model + '/' + name)
 
   print('Loading model...')
   model = load_model(len(character_names), model_filename)
@@ -228,19 +228,19 @@ def main(argv):
         move_file(path, detected_names, False)
 
   def move_file(path, detected_names, single):
-    if len(detected_names) > 3:
-      return
     if single:
-      move(path, output_directory + "/" + selected_model + '/' + detected_names[0] + "/" + filename)
+      if not os.path.exists(output_directory + "/" + selected_model + '/' + detected_names[0]):
+        os.makedirs(output_directory + "/" + selected_model + '/' + detected_names[0])
+      move(path, output_directory + "/" + selected_model + '/' + detected_names[0] + "/" + os.path.basename(path))
     else:
       if not os.path.exists(output_directory + "/" + selected_model + '/' + ' '.join(detected_names)):
-        os.makedirs(output_directory + "/" + selected_model + '/' + ' '.join(detected_names))
-      move(path, output_directory + "/" + selected_model + '/' + ' '.join(detected_names) + "/" + filename)
+        os.makedirs(output_directory + "/" + selected_model + '/' + '-'.join(detected_names))
+      move(path, output_directory + "/" + selected_model + '/' + '-'.join(detected_names) + "/" + os.path.basename(path))
 
   print('=============================================================')
   print('Decision answers    :')
   print('1. Save in single folder')
-  print('2. Save in grouped folder | if more than 3 will be ignored')
+  print('2. Save in grouped folder')
   print('3. False detection')
 
   plt.ion()

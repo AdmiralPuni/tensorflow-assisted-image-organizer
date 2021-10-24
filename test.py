@@ -1,7 +1,8 @@
-import numpy
+import os
 
-character_list = ['umi', 'umi', 'hanayo', 'eli', 'rin', 'nico', 'kotori']
+charlist = []
 
-new = numpy.unique(character_list)
+for dir in os.listdir('images/hololive/train'):
+    charlist.append(dir.replace('-',' ').capitalize())
 
-print(' '.join(new))
+print(', '.join(charlist))
