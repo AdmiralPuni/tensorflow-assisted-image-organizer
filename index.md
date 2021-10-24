@@ -31,8 +31,8 @@ Option | Description | Example
 "-o" | Output directory | output
 "-m" | Model name | myusu
 Choose one | "-" | "-"
-"-s" | Supervised decision, a choice will appear when character is detected | 
-"-a" | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
+"-s" | Supervised decision, a choice will appear when character is detected | "-"
+"-a" | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | "-"
 
 #### Information arguments
 
