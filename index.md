@@ -1,6 +1,6 @@
 Reducing the amount of work needed to sort out jumbled images in a folder.
 
-https://user-images.githubusercontent.com/42926364/138214467-9bfe112d-d3ad-49f1-851b-d0ef09e95649.mp4
+![unknown_2021 10 24-15 59](https://user-images.githubusercontent.com/42926364/138588543-d8338a9f-36e4-4037-9255-b04023477bb3.png)
 
 ## Running The Program
 Example : taio.py -i input -o output -m myusu -s
@@ -11,7 +11,7 @@ Option | Description | Example
 -i | Input directory | input
 -o | Output directory | output
 -m | Model name | myusu
-Choose one
+Choose one | - | -
 -s | Supervised decision, a choice will appear when character is detected | 
 -a | Unsupervised, detections are automatically moved to output folder. Not recommended since false positives is quite often with large model | 
 
