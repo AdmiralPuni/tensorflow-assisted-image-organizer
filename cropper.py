@@ -118,7 +118,7 @@ image_paths_list = []
 path_count = 0
 
 input_folder = 'images'
-master_folder = 'hololive'
+master_folder = 'myusu'
 output_folder = 'cropper'
 
 class image_paths:

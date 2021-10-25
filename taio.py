@@ -279,13 +279,18 @@ def main(argv):
 
     root.title("Tensorflow Assisted Image Organizer | TAIO v0.1")
 
-    def cycle_prediction(index, single, false=True):
-      #attempting to treat the last selection
+    def cycle_prediction(index, single, save=True):
+      
       current_prediction = prediction_list[index]
-      if false:
+      if save:
         move_file(current_prediction.path, current_prediction.names, single)
+      #attempting to treat out of index on last prediction
       try:
         current_prediction = prediction_list[index+1]
+        #Skip if prediction doesn't detect any names
+        if len(current_prediction.names) == 0:
+          cycle_prediction(get_index(), False, False)
+          return
         change_pic(vlabel, current_prediction.image)
         change_name(detection_text, current_prediction.names)
       except:
@@ -307,7 +312,7 @@ def main(argv):
         labelname.configure(text=text)
 
     vlabel = tk.Label(root)
-    photo = ImageTk.PhotoImage(Image.open("logpu.png").resize((500,700)))
+    photo = ImageTk.PhotoImage(Image.open(output_directory + "/temp.png").resize((500,500)))
     vlabel.configure(image=photo)
 
     fm = tk.Frame(root)
