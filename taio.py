@@ -5,6 +5,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import sys
 import getopt
 import json
+import gc
+
+import tkinter as tk
+from tkinter.constants import BOTH, BOTTOM, LEFT, TOP, W, X, YES
 
 import numpy as np
 import tensorflow.keras as keras
@@ -14,6 +18,7 @@ from keras.preprocessing import image
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import ImageTk
 from PIL import Image
 from PIL import ImageColor
 from PIL import ImageDraw
@@ -156,11 +161,11 @@ def main(argv):
     image_pil.save(output_directory + "/temp.png")
     return get_name(output_directory + "/temp.png")
 
-  def draw_boxes(image, boxes, class_names, scores, max_boxes=10, min_score=0.3):
+  def draw_boxes(loaded_image, boxes, class_names, scores, max_boxes=10, min_score=0.3):
     """Overlay labeled boxes on an image with formatted scores and label names."""
     color = ImageColor.getrgb('#6AE670')
     font = ImageFont.truetype("arial.ttf", 35)
-    image_boxes = image
+    image_boxes = loaded_image
     detected_names = []
 
     for i in range(min(boxes.shape[0], max_boxes)):
@@ -168,8 +173,7 @@ def main(argv):
         if class_names[i].decode("ascii") == "Human face":
           ymin, xmin, ymax, xmax = tuple(boxes[i])
           
-          
-          image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
+          image_pil = Image.fromarray(np.uint8(loaded_image)).convert("RGB")
           detected_names.append(crop_and_detect(image_pil, ymin, xmin, ymax, xmax))
 
           display_str = "{}: {}%".format(detected_names[-1] + ' | Face', int(100 * scores[i]))
@@ -177,6 +181,9 @@ def main(argv):
           draw_bounding_box_on_image(image_pil, ymin, xmin, ymax, xmax, color, font, display_str_list=[display_str])
           
           np.copyto(image_boxes, np.array(image_pil))
+    #Abomination
+    #todo load image preserve aspect ratio
+    #Image.fromarray(np.uint8(image_boxes)).convert("RGB").save(output_directory + '/' + 'temp-detected' + "/temp_box.png")
     return image_boxes, detected_names
   
   def load_img(path):
@@ -193,11 +200,15 @@ def main(argv):
 
     result = {key:value.numpy() for key,value in result.items()}
 
+    #detect faces>draw box around them> detect the face<repeat >return image with box and detected names
     image_with_boxes, detected_names = draw_boxes(
         img.numpy(), result["detection_boxes"],
         result["detection_class_entities"], result["detection_scores"])
 
-    return prediction(path, np.unique(detected_names), image_with_boxes)
+    #Cache the image into a folder to ease matplotlib and tkinter
+    Image.fromarray(np.uint8(image_with_boxes)).convert("RGB").save(output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
+    
+    return prediction(path, np.unique(detected_names), output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
 
   print("Running detections...")
   for filename in tqdm(os.listdir(input_directory)):
@@ -207,10 +218,17 @@ def main(argv):
     else:
         continue
 
+  #Attempting to free up RAM, hub ram in still in shackles
+  print('Clearing model...')
+  del model
+  print('Clearing mobilenet...')
+  del detector
+  print('Clearing keras session')
+  keras.backend.clear_session()
+  print('Collecting garbage...')
+  gc.collect()
+
   def user_decision(path, detected_names):
-    if len(detected_names) == 0:
-      return
-    
     if supervision:
       print("Detected            :", detected_names)
       plt.title(' '.join(detected_names), fontsize=24)
@@ -233,24 +251,86 @@ def main(argv):
         os.makedirs(output_directory + "/" + selected_model + '/' + detected_names[0])
       move(path, output_directory + "/" + selected_model + '/' + detected_names[0] + "/" + os.path.basename(path))
     else:
-      if not os.path.exists(output_directory + "/" + selected_model + '/' + ' '.join(detected_names)):
+      if not os.path.exists(output_directory + "/" + selected_model + '/' + '-'.join(detected_names)):
         os.makedirs(output_directory + "/" + selected_model + '/' + '-'.join(detected_names))
       move(path, output_directory + "/" + selected_model + '/' + '-'.join(detected_names) + "/" + os.path.basename(path))
 
-  print('=============================================================')
-  print('Decision answers    :')
-  print('1. Save in single folder')
-  print('2. Save in grouped folder')
-  print('3. False detection')
-
-  plt.ion()
-  plt.show()
-
-  for list in prediction_list:
+  #standard terminal with image using matplotlib(incredibly slow)
+  def terminal():
     print('=============================================================')
-    #print('Path      : ', list.path)
-    plt.imshow(list.image)
-    user_decision(list.path, list.names)
+    print('Decision answers    :')
+    print('1. Save in single folder')
+    print('2. Save in grouped folder')
+    print('3. False detection')
+    plt.ion()
+    plt.show()
+
+    for list in prediction_list:
+      if len(list.names) != 0:
+        print('=============================================================')
+        #print('Path      : ', list.path)
+        plt.imshow(load_img(list.image))
+        user_decision(list.path, list.names)
+
+  
+  #Tkinter gui stuff, miles faster than matplotlib
+  def gui():
+    root = tk.Tk()
+
+    root.title("Tensorflow Assisted Image Organizer | TAIO v0.1")
+
+    def cycle_prediction(index, single, false=True):
+      #attempting to treat the last selection
+      current_prediction = prediction_list[index]
+      if false:
+        move_file(current_prediction.path, current_prediction.names, single)
+      try:
+        current_prediction = prediction_list[index+1]
+        change_pic(vlabel, current_prediction.image)
+        change_name(detection_text, current_prediction.names)
+      except:
+        change_name(detection_text, 'Task completed')
+
+    def get_index(index = []):
+      index.append(0)
+      return len(index)-1
+
+    def change_pic(labelname, file_path, max_width = 500):
+        loaded_image = Image.open(file_path)
+        width, height = loaded_image.size
+        ratio_height = height/width
+        photo1 = ImageTk.PhotoImage(loaded_image.resize((max_width, round(max_width*ratio_height))))
+        labelname.configure(image=photo1)
+        labelname.photo = photo1
+
+    def change_name(labelname, text):
+        labelname.configure(text=text)
+
+    vlabel = tk.Label(root)
+    photo = ImageTk.PhotoImage(Image.open("logpu.png").resize((500,700)))
+    vlabel.configure(image=photo)
+
+    fm = tk.Frame(root)
+    button_single = tk.Button(fm, text="Single", width=15,command=lambda: cycle_prediction(get_index(), True), font="Calibri 20")
+    button_multi = tk.Button(fm, text="Multi", width=15,command=lambda: cycle_prediction(get_index(), False), font="Calibri 20")
+    button_false = tk.Button(fm, text="False", width=15,command=lambda: cycle_prediction(get_index(), True, False), font="Calibri 20")
+    button_single.pack(side=LEFT, anchor=W, fill=X, expand=YES)
+    button_multi.pack(side=LEFT, anchor=W, fill=X, expand=YES)
+    button_false.pack(side=LEFT, anchor=W, fill=X, expand=YES)
+    fm.pack(side=TOP, fill=BOTH, expand=YES)
+
+    detection_text = tk.Label(root, text="Detected names", font="Calibri 20")
+    detection_text.pack(side=TOP, fill=BOTH, expand=YES)
+    vlabel.pack(side=BOTTOM)
+
+    current_prediction = prediction_list[0]
+    change_pic(vlabel, current_prediction.image)
+    change_name(detection_text, current_prediction.names)
+
+    root.mainloop()
+
+  gui()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
