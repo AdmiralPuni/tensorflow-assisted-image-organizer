@@ -1,4 +1,4 @@
-# <span style="color=#E1027C">T</span>AIO | Tensorflow Assisted Image Organizer 
+# TAIO | Tensorflow Assisted Image Organizer 
 Reducing the amount of work needed to sort out jumbled images in a folder.
 
 ![unknown_2021 10 24-15 59](https://user-images.githubusercontent.com/42926364/138587802-1dab8452-e8d6-462e-823d-8c0a417b9b99.png)
