@@ -6,6 +6,9 @@ import sys
 import getopt
 import json
 import gc
+import time
+
+start_time = time.time()
 
 import tkinter as tk
 from tkinter.constants import BOTH, BOTTOM, LEFT, N, NO, TOP, W, X, YES
@@ -190,12 +193,11 @@ def main(argv):
     color = ImageColor.getrgb('#6AE670')
     try:
       font = ImageFont.truetype("arial.ttf", 35)
-      try:
-        font = ImageFont.truetype("/usr/share/fonts/noto/NotoSans-Regular.ttf")
-      except:
-        pass
     except:
-      font = ImageFont.load_default()
+      try:
+        font = ImageFont.truetype("/usr/share/fonts/noto/NotoSans-Regular.ttf", 35)
+      except:
+        font = ImageFont.load_default()
     
     image_boxes = loaded_image
     detected_names = []
@@ -261,6 +263,10 @@ def main(argv):
   keras.backend.clear_session()
   print('Collecting garbage...')
   gc.collect()
+
+  end_time = time.time()
+  #print('Supervision         :', supervision)
+  print('Time elapsed        : ', round(end_time-start_time,2), 's')
 
   #Terminal input for decision of the prediction
   def user_decision(path, detected_names):
@@ -335,6 +341,7 @@ def main(argv):
           return
         change_pic(vlabel, current_prediction.image)
         change_name(detection_text, '-'.join(current_prediction.names))
+        change_name(label_path, current_prediction.path)
       except:
         change_name(detection_text, 'Task completed')
 
@@ -372,15 +379,20 @@ def main(argv):
     photo = ImageTk.PhotoImage(Image.open(output_directory + "/temp.png").resize((500,500)))
     vlabel.configure(image=photo)
     detection_text = tk.Label(frame_main, text="Detected names", font="Calibri 24")
+    label_path = tk.Label(frame_main, font="Calibri 16")
     detection_text.pack(side=TOP, anchor=N)
+    label_path.pack(side=TOP, fill=BOTH, expand=NO)
     vlabel.pack(side=TOP, anchor=N)
     frame_main.pack(side=TOP, fill=BOTH, expand=YES)
+
+    
 
     #Show the first item in the prediction list
     #Todo: Ignore the first detection if the name is empty
     current_prediction = prediction_list[0]
     change_pic(vlabel, current_prediction.image)
     change_name(detection_text, '-'.join(current_prediction.names))
+    change_name(label_path, current_prediction.path)
 
     root.mainloop()
 
