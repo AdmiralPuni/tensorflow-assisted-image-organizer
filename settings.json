@@ -1,13 +1,5 @@
 {
     "models": {
-        "sample": {
-            "names": [
-                "cirno",
-                "gab",
-                "karen"
-            ],
-            "filename": "model_weights_saved_char.hdf5"
-        },
         "hololive-en": {
             "names": [
                 "ame",
@@ -17,16 +9,6 @@
                 "mori"
             ],
             "filename": "model-hololive-en.hdf5"
-        },
-        "hololive-en-faces": {
-            "names": [
-                "ame",
-                "gura",
-                "ina",
-                "kiara",
-                "mori"
-            ],
-            "filename": "model-hololive-en-faces.hdf5"
         },
         "hololive": {
             "names": [
@@ -78,21 +60,6 @@
                 "umi"
             ],
             "filename": "model-myusu.hdf5"
-        },
-        "rinpana": {
-            "names": [
-                "hanayo",
-                "rin",
-                "rinpana"
-            ],
-            "filename": "model-rinpana.hdf5"
-        },
-        "rh": {
-            "names": [
-                "hanayo",
-                "rin"
-            ],
-            "filename": "model-rh.hdf5"
         }
     }
 }

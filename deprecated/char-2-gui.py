@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.constants import BOTH, BOTTOM, LEFT, TOP, W, X, YES
+from tkinter.constants import BOTH, BOTTOM, CENTER, LEFT, N, NO, S, TOP, W, X, YES
 
 from PIL import ImageTk, Image
 import os
@@ -20,21 +20,31 @@ def change_pic(labelname, file_path, max_width = 500):
 def change_name(labelname, text):
     labelname.configure(text=text)
 
-vlabel = tk.Label(root)
-photo = ImageTk.PhotoImage(Image.open("logpu.png").resize((500,700)))
-vlabel.configure(image=photo)
-
 fm = tk.Frame(root)
 button_single = tk.Button(fm, text="Single", width=15, font="Calibri 20")
 button_multi = tk.Button(fm, text="Multi", width=15, font="Calibri 20")
 button_false = tk.Button(fm, text="False", width=15, font="Calibri 20")
-button_single.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-button_multi.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-button_false.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-fm.pack(side=TOP, fill=BOTH, expand=YES)
+button_single.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+button_multi.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+button_false.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+fm.pack(side=TOP, fill=BOTH, expand=NO)
 
-detection_text = tk.Label(root, text="Detected names", font="Calibri 20")
-detection_text.pack(side=TOP, fill=BOTH, expand=YES)
-vlabel.pack(side=BOTTOM)
+frame_main = tk.Frame(root)
+vlabel = tk.Label(frame_main)
+photo = ImageTk.PhotoImage(Image.open("logpu.png").resize((500,700)))
+vlabel.configure(image=photo)
+detection_text = tk.Label(frame_main, text="Detected names", font="Calibri 20")
+detection_text.pack(side=TOP, anchor=N)
+vlabel.pack(side=TOP, anchor=N)
+frame_main.pack(side=TOP, fill=BOTH, expand=YES)
+
+frame_footer = tk.Frame(root)
+button_single = tk.Button(frame_footer, text="Single", width=15, font="Calibri 20")
+button_multi = tk.Button(frame_footer, text="Multi", width=15, font="Calibri 20")
+button_false = tk.Button(frame_footer, text="False", width=15, font="Calibri 20")
+button_single.pack(side=LEFT, anchor=S, fill=X, expand=YES)
+button_multi.pack(side=LEFT, anchor=S, fill=X, expand=YES)
+button_false.pack(side=LEFT, anchor=S, fill=X, expand=YES)
+frame_footer.pack(side=BOTTOM, fill=BOTH, expand=NO)
 
 root.mainloop()

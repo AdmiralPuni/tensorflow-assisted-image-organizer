@@ -8,7 +8,7 @@ import json
 import gc
 
 import tkinter as tk
-from tkinter.constants import BOTH, BOTTOM, LEFT, TOP, W, X, YES
+from tkinter.constants import BOTH, BOTTOM, LEFT, N, NO, TOP, W, X, YES
 
 import numpy as np
 import tensorflow.keras as keras
@@ -56,20 +56,38 @@ def main(argv):
   supervision = True
   prediction_list = []
 
+  #Class to save prediction result
   class prediction:
     def __init__(self, path, names, image):
       self.path = path
       self.names = names
       self.image = image
 
+  def print_help():
+    print('Example     : taio.py -i input -o output -m myusu -s')
+    print('Arguments   :')
+    print('-i | Input folder, place your unsorted image here')
+    print('-o | Output folder, sorted images will be moved here')
+    print('-m | Model for character face detection')
+    print('-l | List the models available')
+    print('-s | Supervised decision, you will decide for each image')
+    print('-a | Images will be automaticcaly moved to their folder WARNING: Not very accurate')
+    print('-h | Show this help menu')
+
+  #Get launch argument
+  #Todo: load large imports after argument check instead of before
+  #Todo: Check if program launches without arguments
   try:
     opts, args = getopt.getopt(argv, "hli:o:m:sa", ["i=", "o=", "m="])
   except getopt.GetoptError:
-    print('test.py -i <input_directoryfile> -o <output_directory>')
+    print_help()
     sys.exit(2)
+  if len(opts) == 0:
+    print_help()
+    sys.exit()
   for opt, arg in opts:
     if opt == '-h':
-      print('test.py -i <input_directoryfile> -o <output_directory>')
+      print_help()
       sys.exit()
     elif opt in ("-l"):
       for model_name in settings_json['models']:
@@ -91,6 +109,7 @@ def main(argv):
   print('Model               :', selected_model)
   print('Supervision         :', supervision)
 
+  #Load character names and the model filename from settings.json
   character_names = settings_json['models'][selected_model]['names']
   model_filename = settings_json['models'][selected_model]['filename']
 
@@ -100,11 +119,13 @@ def main(argv):
 
   print('Loading model...')
   model = load_model(len(character_names), model_filename)
-  print("Loading Mobilenet...")
+  #print(model.summary())
+  print("Loading mobilenet...")
   #module_handle = "models/rcnn/"
   module_handle = "models/mobilenet/"
   detector = hub.load(module_handle).signatures['default']
 
+  #Compares cropped image to the model
   def get_name(cropped_image):
     img = image.load_img(cropped_image, target_size=(150, 150))
     x = image.img_to_array(img)
@@ -115,10 +136,13 @@ def main(argv):
 
     largest = 0
 
+    #Get the largest class
+    #Sometimes it returns in a float number with e on the back
     for x in range(0, len(classes[0])):
       if(classes[0][x] > largest):
         largest = x
     
+    #return the name using the largest index
     return character_names[largest]
 
   def draw_bounding_box_on_image(image, ymin, xmin, ymax, xmax, color, font, thickness=4, display_str_list=()):
@@ -181,11 +205,10 @@ def main(argv):
           draw_bounding_box_on_image(image_pil, ymin, xmin, ymax, xmax, color, font, display_str_list=[display_str])
           
           np.copyto(image_boxes, np.array(image_pil))
-    #Abomination
-    #todo load image preserve aspect ratio
-    #Image.fromarray(np.uint8(image_boxes)).convert("RGB").save(output_directory + '/' + 'temp-detected' + "/temp_box.png")
+    
     return image_boxes, detected_names
   
+  #Load image into tensorflow format
   def load_img(path):
     img = tf.io.read_file(path)
     img = tf.image.decode_jpeg(img, channels=3)
@@ -206,10 +229,12 @@ def main(argv):
         result["detection_class_entities"], result["detection_scores"])
 
     #Cache the image into a folder to ease matplotlib and tkinter
+    #Todo?: Clear the cache when the program is over
     Image.fromarray(np.uint8(image_with_boxes)).convert("RGB").save(output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
     
     return prediction(path, np.unique(detected_names), output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
 
+  #Iterates through images in input folder
   print("Running detections...")
   for filename in tqdm(os.listdir(input_directory)):
     if filename.endswith(".jpg") or filename.endswith(".png"):
@@ -219,15 +244,17 @@ def main(argv):
         continue
 
   #Attempting to free up RAM, hub ram in still in shackles
+  #Todo: Doesn't work on linux
   print('Clearing model...')
   del model
   print('Clearing mobilenet...')
   del detector
-  print('Clearing keras session')
+  print('Clearing keras session...')
   keras.backend.clear_session()
   print('Collecting garbage...')
   gc.collect()
 
+  #Terminal input for decision of the prediction
   def user_decision(path, detected_names):
     if supervision:
       print("Detected            :", detected_names)
@@ -245,6 +272,8 @@ def main(argv):
       elif len(detected_names) > 1:
         move_file(path, detected_names, False)
 
+  #Move the file to single character folder or group of characters
+  #Todo: make it less dumb
   def move_file(path, detected_names, single):
     if single:
       if not os.path.exists(output_directory + "/" + selected_model + '/' + detected_names[0]):
@@ -262,9 +291,11 @@ def main(argv):
     print('1. Save in single folder')
     print('2. Save in grouped folder')
     print('3. False detection')
+    #Load matplotlib window
     plt.ion()
     plt.show()
 
+    #Iterates through the prefiction list
     for list in prediction_list:
       if len(list.names) != 0:
         print('=============================================================')
@@ -279,27 +310,32 @@ def main(argv):
 
     root.title("Tensorflow Assisted Image Organizer | TAIO v0.1")
 
+    #Cycles through the prediction list
     def cycle_prediction(index, single, save=True):
       
+      #move the predicted image to the folder of the name
       current_prediction = prediction_list[index]
       if save:
         move_file(current_prediction.path, current_prediction.names, single)
       #attempting to treat out of index on last prediction
       try:
+        #Load the next prediction to show in the window
         current_prediction = prediction_list[index+1]
         #Skip if prediction doesn't detect any names
         if len(current_prediction.names) == 0:
           cycle_prediction(get_index(), False, False)
           return
         change_pic(vlabel, current_prediction.image)
-        change_name(detection_text, current_prediction.names)
+        change_name(detection_text, '-'.join(current_prediction.names))
       except:
         change_name(detection_text, 'Task completed')
 
+    #Iterates when called
     def get_index(index = []):
       index.append(0)
       return len(index)-1
 
+    #Change the picture in the window
     def change_pic(labelname, file_path, max_width = 500):
         loaded_image = Image.open(file_path)
         width, height = loaded_image.size
@@ -308,29 +344,35 @@ def main(argv):
         labelname.configure(image=photo1)
         labelname.photo = photo1
 
+    #Change the name in the window
     def change_name(labelname, text):
         labelname.configure(text=text)
 
-    vlabel = tk.Label(root)
-    photo = ImageTk.PhotoImage(Image.open(output_directory + "/temp.png").resize((500,500)))
-    vlabel.configure(image=photo)
-
+    #Load buttons
     fm = tk.Frame(root)
     button_single = tk.Button(fm, text="Single", width=15,command=lambda: cycle_prediction(get_index(), True), font="Calibri 20")
     button_multi = tk.Button(fm, text="Multi", width=15,command=lambda: cycle_prediction(get_index(), False), font="Calibri 20")
     button_false = tk.Button(fm, text="False", width=15,command=lambda: cycle_prediction(get_index(), True, False), font="Calibri 20")
-    button_single.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-    button_multi.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-    button_false.pack(side=LEFT, anchor=W, fill=X, expand=YES)
-    fm.pack(side=TOP, fill=BOTH, expand=YES)
+    button_single.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+    button_multi.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+    button_false.pack(side=LEFT, anchor=N, fill=X, expand=YES)
+    fm.pack(side=TOP, fill=BOTH, expand=NO)
 
-    detection_text = tk.Label(root, text="Detected names", font="Calibri 20")
-    detection_text.pack(side=TOP, fill=BOTH, expand=YES)
-    vlabel.pack(side=BOTTOM)
+    #Load label for detected names
+    frame_main = tk.Frame(root)
+    vlabel = tk.Label(frame_main)
+    photo = ImageTk.PhotoImage(Image.open(output_directory + "/temp.png").resize((500,500)))
+    vlabel.configure(image=photo)
+    detection_text = tk.Label(frame_main, text="Detected names", font="Calibri 24")
+    detection_text.pack(side=TOP, anchor=N)
+    vlabel.pack(side=TOP, anchor=N)
+    frame_main.pack(side=TOP, fill=BOTH, expand=YES)
 
+    #Show the first item in the prediction list
+    #Todo: Ignore the first detection if the name is empty
     current_prediction = prediction_list[0]
     change_pic(vlabel, current_prediction.image)
-    change_name(detection_text, current_prediction.names)
+    change_name(detection_text, '-'.join(current_prediction.names))
 
     root.mainloop()
 
