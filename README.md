@@ -53,7 +53,7 @@ Name | Characters | File
 ------------ | ------------- | ------------- 
 μ's | models/model-myusu.hdf5 | Eli, Hanayo, Honoka, Kotori, Maki, Nico, Nozomi, Rin, Umi
 Hololive EN Gen-1 | models/model-hololive-en-faces.hdf5 | Ame, Gura, Ina, Mori, Kiara
-Hololive | models/model-hololive.hsf5 | Akai haato, Amane kanata, Gawr gura, Himemori luna, Hoshimachi suisei, Houshou marine, Inugami korone, Kiryu coco, Minato aqua, Momosuzu nene, Mori calliope, Murasaki shion, Nakiri ayame, Natsuiro matsuri, Nekomata okayu, Ninomae_inanis, Ookami mio, Oozora subaru, Ouro kroni, Sakura miko, Shirakami fubuki, Shiranui flare, Shirogane noel, Shishiro botan, Takanashi kiara, Tokino sora, Tokoyami towa, Tsunomaki watame, Uruha rushia, Usada pekora, Watson amelia, Yukihana lamy
+[Experimental] Hololive | models/model-hololive.hsf5 | Akai haato, Amane kanata, Gawr gura, Himemori luna, Hoshimachi suisei, Houshou marine, Inugami korone, Kiryu coco, Minato aqua, Momosuzu nene, Mori calliope, Murasaki shion, Nakiri ayame, Natsuiro matsuri, Nekomata okayu, Ninomae_inanis, Ookami mio, Oozora subaru, Ouro kroni, Sakura miko, Shirakami fubuki, Shiranui flare, Shirogane noel, Shishiro botan, Takanashi kiara, Tokino sora, Tokoyami towa, Tsunomaki watame, Uruha rushia, Usada pekora, Watson amelia, Yukihana lamy
 
 You can add your own custom model, add a new model decription in settings.json follow the examples, the training notebook is included in  char-2.ipynb simply download the model and move it to /models. Tutorial will be added soon into the jupyter notebook(char-2.ipynb)
 
@@ -82,4 +82,4 @@ Test on myusu model with 12 input image
 GPU/CPU | Operating System |  Time
 ------------ | ------------- | -------------
 Intel Core I5 3320M | Manjaro 21.1.4 | 37.37 s
-AMD Athlon X4 860K | Windows 10 1701 | 53.56 s
+AMD Athlon X4 860K | Windows 10 1903 | 53.56 s
