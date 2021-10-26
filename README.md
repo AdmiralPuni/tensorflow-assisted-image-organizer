@@ -1,12 +1,12 @@
-# TAIO | Tensorflow Assisted Image Organizer 
-Reducing the amount of work needed to sort out jumbled images in a folder.
+<p align="center">
+  <img src="https://files.catbox.moe/r9l8px.png" />
+</p>
 
-![unknown_2021 10 24-15 59](https://user-images.githubusercontent.com/42926364/138587802-1dab8452-e8d6-462e-823d-8c0a417b9b99.png)
+<p align="center">
+  <img src="https://files.catbox.moe/oxq5q9.png" />
+</p>
 
-
-
-https://user-images.githubusercontent.com/42926364/138587989-b45a9d30-3587-4b2d-9aca-475411771838.mp4
-
+https://user-images.githubusercontent.com/42926364/138804997-638e03f7-0be0-4f7a-87ec-899ecad1ab65.mp4
 
 
 ## Running The Program
@@ -15,17 +15,19 @@ Example : taio.py -i input -o output -m myusu -s
 
 ### Installation
 
-Name | Method 
------------- | -------------
-python 3.9 | Windows installation
-tensorflow | pip
-tensorflow_hub | pip
-matplotlib | pip 
-keras | pip
-tqdm | pip
-numpy | pip
-PIL | pip
-shutil | pip
+For windows you can run this command on powershell : c:/Windows/py.exe -m pip install #modulename
+
+Name | Method | Linux
+------------ | ------------- | -------------
+python 3.9 | Windows installation | python is included
+tensorflow | pip install tensorflow | pip install tensorflow
+tensorflow_hub | pip install tensorflow-hub | pip install tensorflow-hub
+matplotlib | pip install matplotlib | pip install matplotlib
+keras | pip install keras | pip install keras
+tqdm | pip install tqdm | pip install tqdm
+numpy | pip install numpy | pip install numpy
+PIL | pip install pillow | pip install pillow
+Tkinter | pip install tkinter/tk | pacman -S tk
 
 ### Arguments
 
