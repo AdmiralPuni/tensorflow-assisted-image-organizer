@@ -188,7 +188,15 @@ def main(argv):
   def draw_boxes(loaded_image, boxes, class_names, scores, max_boxes=10, min_score=0.3):
     """Overlay labeled boxes on an image with formatted scores and label names."""
     color = ImageColor.getrgb('#6AE670')
-    font = ImageFont.truetype("arial.ttf", 35)
+    try:
+      font = ImageFont.truetype("arial.ttf", 35)
+      try:
+        font = ImageFont.truetype("/usr/share/fonts/noto/NotoSans-Regular.ttf")
+      except:
+        pass
+    except:
+      font = ImageFont.load_default()
+    
     image_boxes = loaded_image
     detected_names = []
 
