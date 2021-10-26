@@ -75,3 +75,11 @@ char-2.ipynb | Jupyter notebook to train the models | images needs to be separat
  - Matplotlib image load slows down decision making process
  - Overall program optimization
 
+## Performance
+
+Test on myusu model with 12 input image
+
+GPU/CPU | Operating System |  Time
+------------ | ------------- | -------------
+Core I5 3320M | Manjaro 21.1.4 | 37.37s
+Athlon X4 860K | Windows 10 1701 | Unknown
