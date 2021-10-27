@@ -45,7 +45,7 @@
                 "watson-amelia",
                 "yukihana-lamy"
             ],
-            "filename": "model-hololive.hdf5"
+            "filename": "model-hololive-flip.hdf5"
         },
         "myusu": {
             "names": [
@@ -59,7 +59,7 @@
                 "rin",
                 "umi"
             ],
-            "filename": "model-myusu.hdf5"
+            "filename": "model-myusu-flip.hdf5"
         }
     }
 }

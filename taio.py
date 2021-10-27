@@ -29,7 +29,7 @@ from PIL import ImageFont
 from shutil import move
 
 
-
+#loading model from hdf5 file
 def load_model(character_count, model_filename):
   model = keras.models.Sequential([
     keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
@@ -79,7 +79,6 @@ def main(argv):
 
   #Get launch argument
   #Todo: load large imports after argument check instead of before
-  #Todo: Check if program launches without arguments
   try:
     opts, args = getopt.getopt(argv, "hli:o:m:sa", ["i=", "o=", "m="])
   except getopt.GetoptError:
@@ -116,10 +115,6 @@ def main(argv):
   character_names = settings_json['models'][selected_model]['names']
   model_filename = settings_json['models'][selected_model]['filename']
 
-  #for name in character_names:
-  #  if not os.path.exists(output_directory + '/' + selected_model + '/' + name):
-  #    os.makedirs(output_directory + '/' + selected_model + '/' + name)
-
   print('Loading model...')
   model = load_model(len(character_names), model_filename)
   #print(model.summary())
@@ -140,7 +135,7 @@ def main(argv):
     largest = 0
 
     #Get the largest class
-    #Sometimes it returns in a float number with e on the back
+    #Sometimes it returns in a float number with e on the back, this is used to managed that
     for x in range(0, len(classes[0])):
       if(classes[0][x] > largest):
         largest = x
@@ -148,8 +143,8 @@ def main(argv):
     #return the name using the largest index
     return character_names[largest]
 
+  #Draw boxes and text on image, I don't know how this works
   def draw_bounding_box_on_image(image, ymin, xmin, ymax, xmax, color, font, thickness=4, display_str_list=()):
-    """Adds a bounding box to an image."""
     draw = ImageDraw.Draw(image)
     im_width, im_height = image.size
     (left, right, top, bottom) = (xmin * im_width, xmax * im_width,
@@ -179,17 +174,19 @@ def main(argv):
                 font=font)
       text_bottom -= text_height - 2 * margin
 
+  #Crop and compare faces
+  #Cannot give imade directly to comparator, save into a temp image
   def crop_and_detect(image, ymin, xmin, ymax, xmax):
     image_pil = image
     im_width, im_height = image_pil.size
-    (left, top, right, bottom) = (xmin * im_width,ymin * im_height, xmax * im_width,
-                                  ymax * im_height)
+    (left, top, right, bottom) = (xmin * im_width, ymin * im_height, xmax * im_width, ymax * im_height)
     image_pil = image_pil.crop((left, top, right, bottom))
     image_pil.save(output_directory + "/temp.png")
     return get_name(output_directory + "/temp.png")
 
+  #SHOULD BE RENAMED, Does face detection and image comparison
+  #returns image with the boxes and detected names
   def draw_boxes(loaded_image, boxes, class_names, scores, max_boxes=10, min_score=0.3):
-    """Overlay labeled boxes on an image with formatted scores and label names."""
     color = ImageColor.getrgb('#6AE670')
     try:
       font = ImageFont.truetype("arial.ttf", 35)
@@ -268,6 +265,19 @@ def main(argv):
   #print('Supervision         :', supervision)
   print('Time elapsed        : ', round(end_time-start_time,2), 's')
 
+  #Move the file to single character folder or group of characters
+  #Todo: make it less dumb
+  def move_file(path, detected_names, single, sorted_folder = output_directory + "/" + selected_model + '/'):
+    if single:
+      if not os.path.exists(sorted_folder + detected_names[0]):
+        os.makedirs(sorted_folder + detected_names[0])
+      move(path, sorted_folder + detected_names[0] + "/" + os.path.basename(path))
+    else:
+      #WARNING: If the character name has - it will be hard to read the folder
+      if not os.path.exists(sorted_folder + '-'.join(detected_names)):
+        os.makedirs(sorted_folder + '-'.join(detected_names))
+      move(path, sorted_folder + '-'.join(detected_names) + "/" + os.path.basename(path))
+
   #Terminal input for decision of the prediction
   def user_decision(path, detected_names):
     if supervision:
@@ -286,19 +296,8 @@ def main(argv):
       elif len(detected_names) > 1:
         move_file(path, detected_names, False)
 
-  #Move the file to single character folder or group of characters
-  #Todo: make it less dumb
-  def move_file(path, detected_names, single):
-    if single:
-      if not os.path.exists(output_directory + "/" + selected_model + '/' + detected_names[0]):
-        os.makedirs(output_directory + "/" + selected_model + '/' + detected_names[0])
-      move(path, output_directory + "/" + selected_model + '/' + detected_names[0] + "/" + os.path.basename(path))
-    else:
-      if not os.path.exists(output_directory + "/" + selected_model + '/' + '-'.join(detected_names)):
-        os.makedirs(output_directory + "/" + selected_model + '/' + '-'.join(detected_names))
-      move(path, output_directory + "/" + selected_model + '/' + '-'.join(detected_names) + "/" + os.path.basename(path))
-
-  #standard terminal with image using matplotlib(incredibly slow)
+  #Terminal with image using matplotlib(incredibly slow)
+  #I might abandon this completely for the GUI since decision making progress needs to be fast
   def terminal():
     print('=============================================================')
     print('Decision answers    :')
@@ -309,7 +308,7 @@ def main(argv):
     plt.ion()
     plt.show()
 
-    #Iterates through the prefiction list
+    #Iterates through the prediction list
     for list in prediction_list:
       if len(list.names) != 0:
         print('=============================================================')
@@ -318,11 +317,19 @@ def main(argv):
         user_decision(list.path, list.names)
 
   
-  #Tkinter gui stuff, miles faster than matplotlib
+  #Tkinter gui stuff, miles faster than matplotlib. It works
   def gui():
     root = tk.Tk()
 
     root.title("Tensorflow Assisted Image Organizer | TAIO v0.1")
+
+    def detection_count(detection_correct ,true_count = [], false_count = []):
+      if detection_correct:
+        true_count.append(0)
+        return len(true_count)
+      else:
+        false_count.append(0)
+        return len(false_count)
 
     #Cycles through the prediction list
     def cycle_prediction(index, single, save=True):
@@ -330,7 +337,10 @@ def main(argv):
       #move the predicted image to the folder of the name
       current_prediction = prediction_list[index]
       if save:
+        detection_count(True)
         move_file(current_prediction.path, current_prediction.names, single)
+      else:
+        detection_count(False)
       #attempting to treat out of index on last prediction
       try:
         #Load the next prediction to show in the window
@@ -344,6 +354,10 @@ def main(argv):
         change_name(label_path, current_prediction.path)
       except:
         change_name(detection_text, 'Task completed')
+        false_count = detection_count(False)-1
+        true_count = detection_count(True)-1
+        detection_accuracy = (true_count/(false_count + true_count))*100
+        change_name(label_path, 'FC=' + str(false_count) + ' TC=' + str(true_count) + ' ACC=' + str(round(detection_accuracy,2)) + '%')
 
     #Iterates when called
     def get_index(index = []):
@@ -384,8 +398,6 @@ def main(argv):
     label_path.pack(side=TOP, fill=BOTH, expand=NO)
     vlabel.pack(side=TOP, anchor=N)
     frame_main.pack(side=TOP, fill=BOTH, expand=YES)
-
-    
 
     #Show the first item in the prediction list
     #Todo: Ignore the first detection if the name is empty
