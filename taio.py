@@ -216,8 +216,14 @@ def main(argv):
     return image_boxes, detected_names
   
   #Load image into tensorflow format
+  #Todo: handle if image is less than 1000px wide
   def load_img(path):
-    img = tf.io.read_file(path)
+    loaded_image = Image.open(path)
+    width, height = loaded_image.size
+    ratio_height = height/width
+    loaded_image.resize((1000, round(1000*ratio_height))).save(output_directory + "/temp_load.png")
+        
+    img = tf.io.read_file(output_directory + "/temp_load.png")
     img = tf.image.decode_jpeg(img, channels=3)
     return img
 
@@ -262,7 +268,6 @@ def main(argv):
   gc.collect()
 
   end_time = time.time()
-  #print('Supervision         :', supervision)
   print('Time elapsed        : ', round(end_time-start_time,2), 's')
 
   #Move the file to single character folder or group of characters
@@ -338,7 +343,7 @@ def main(argv):
       current_prediction = prediction_list[index]
       if save:
         detection_count(True)
-        move_file(current_prediction.path, current_prediction.names, single)
+        #move_file(current_prediction.path, current_prediction.names, single)
       else:
         detection_count(False)
       #attempting to treat out of index on last prediction
