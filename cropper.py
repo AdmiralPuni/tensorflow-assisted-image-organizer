@@ -14,41 +14,7 @@ from tqdm import tqdm
 import numpy as np
 from PIL import Image
 from PIL import ImageColor
-from PIL import ImageDraw
 from PIL import ImageFont
-
-from random import randrange
-
-def draw_bounding_box_on_image(image, ymin, xmin, ymax, xmax, color, font, thickness=4, display_str_list=()):
-  """Adds a bounding box to an image."""
-  draw = ImageDraw.Draw(image)
-  im_width, im_height = image.size
-  (left, right, top, bottom) = (xmin * im_width, xmax * im_width,
-                                ymin * im_height, ymax * im_height)
-  draw.line([(left, top),(right, bottom)], width=thickness, fill=color)
-  draw.line([(left, top), (left, bottom), (right, bottom), (right, top),
-             (left, top)],
-            width=thickness,
-            fill=color)
-  display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
-  total_display_str_height = (1 + 2 * 0.05) * sum(display_str_heights)
-
-  if top > total_display_str_height:
-    text_bottom = top
-  else:
-    text_bottom = top + total_display_str_height
-  # Reverse list and print from bottom to top.
-  for display_str in display_str_list[::-1]:
-    text_width, text_height = font.getsize(display_str)
-    margin = np.ceil(0.05 * text_height)
-    draw.rectangle([(left, text_bottom - text_height - 2 * margin),
-                    (left + text_width, text_bottom)],
-                   fill=color)
-    draw.text((left + margin, text_bottom - text_height - margin),
-              display_str,
-              fill="black",
-              font=font)
-    text_bottom -= text_height - 2 * margin
 
 def crop_image(output, image, ymin, xmin, ymax, xmax):
   image_pil = image
@@ -75,10 +41,6 @@ def draw_boxes(output, image, boxes, class_names, scores, max_boxes=10, min_scor
         color = colors[hash(class_names[i]) % len(colors)]
         image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
         crop_image(output, image_pil, ymin, xmin, ymax, xmax)
-        
-        #draw_bounding_box_on_image(image_pil, ymin, xmin, ymax, xmax, color, font, display_str_list=[display_str])
-        
-        np.copyto(image, np.array(image_pil))
   return image
 
 
@@ -94,7 +56,10 @@ def load_img(path):
 
 
 def run_detector(detector, path, output):
-  img = load_img(path)
+  try:
+    img = load_img(path)
+  except:
+    return
 
   converted_img  = tf.image.convert_image_dtype(img, tf.float32)[tf.newaxis, ...]
   result = detector(converted_img)
@@ -118,7 +83,7 @@ image_paths_list = []
 path_count = 0
 
 input_folder = 'images'
-master_folder = 'myusu'
+master_folder = 'hololive-all'
 output_folder = 'cropper'
 
 class image_paths:
@@ -131,18 +96,7 @@ for master in os.listdir(input_folder + '/' + master_folder):
         if not os.path.exists(output_folder + '/' + master_folder + '/' + master + '/' + slave):
             os.makedirs(output_folder + '/' + master_folder + '/' + master + '/' + slave)
         for files in os.listdir(input_folder + '/' + master_folder + '/' + master + '/' + slave):
-          #image_paths_list[path_count].append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
-          if path_count == 0:
-            path_thread_0.append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
-          if path_count == 1:
-            path_thread_1.append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
-          if path_count == 2:
-            path_thread_2.append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
-          if path_count == 3:
-            path_thread_3.append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
-          path_count += 1
-          if path_count == 4:
-            path_count = 0
+          path_thread_0.append(image_paths(input_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files,output_folder + '/' + master_folder + '/' + master + '/' + slave + '/' + files))
 
 
 class myThread (threading.Thread):
@@ -167,6 +121,3 @@ class myThread (threading.Thread):
 
 
 myThread(0).start()
-myThread(1).start()
-myThread(2).start()
-myThread(3).start()
