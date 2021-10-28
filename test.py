@@ -2,7 +2,7 @@ import os
 
 charlist = []
 
-for dir in os.listdir('images/hololive-all/train'):
+for dir in os.listdir('images/nijigasaki/train'):
     charlist.append(dir.replace('-',' ').capitalize())
 
 print('", "'.join(charlist))

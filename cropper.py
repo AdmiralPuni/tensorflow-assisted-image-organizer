@@ -83,7 +83,7 @@ image_paths_list = []
 path_count = 0
 
 input_folder = 'images'
-master_folder = 'hololive-all'
+master_folder = 'nijigasaki'
 output_folder = 'cropper'
 
 class image_paths:

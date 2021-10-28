@@ -98,6 +98,21 @@
                 "umi"
             ],
             "filename": "model-myusu-v2.hdf5"
+        },
+        "nijigasaki": {
+            "names": [
+                "Asaka karin",
+                "Emma verde",
+                "Konoe kanata",
+                "Miyashita ai",
+                "Nakasu kasumi",
+                "Ousaka shizuku",
+                "Takasaki yuu",
+                "Tennouji rina",
+                "Uehara ayumu",
+                "Yuuki setsuna"
+            ],
+            "filename": "model-nijigasaki.hdf5"
         }
     }
 }
