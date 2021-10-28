@@ -51,9 +51,8 @@ Option | Description
 
 Name | Characters | File
 ------------ | ------------- | ------------- 
-μ's | models/model-myusu.hdf5 | Eli, Hanayo, Honoka, Kotori, Maki, Nico, Nozomi, Rin, Umi
-Hololive EN Gen-1 | models/model-hololive-en-faces.hdf5 | Ame, Gura, Ina, Mori, Kiara
-[Experimental] Hololive | models/model-hololive.hsf5 | Akai haato, Amane kanata, Gawr gura, Himemori luna, Hoshimachi suisei, Houshou marine, Inugami korone, Kiryu coco, Minato aqua, Momosuzu nene, Mori calliope, Murasaki shion, Nakiri ayame, Natsuiro matsuri, Nekomata okayu, Ninomae_inanis, Ookami mio, Oozora subaru, Ouro kroni, Sakura miko, Shirakami fubuki, Shiranui flare, Shirogane noel, Shishiro botan, Takanashi kiara, Tokino sora, Tokoyami towa, Tsunomaki watame, Uruha rushia, Usada pekora, Watson amelia, Yukihana lamy
+μ's | models/model-myusu-v2.hdf5 | Eli, Hanayo, Honoka, Kotori, Maki, Nico, Nozomi, Rin, Umi
+Hololive | models/model-hololive-v2.hsf5 | Akai haato, Aki rosenthal, Amane kanata, Gawr gura, Himemori luna, Hoshimachi suisei, Houshou marine, Inugami korone, Kiryu coco, Minato aqua, Momosuzu nene, Mori calliope, Murasaki shion, Nakiri ayame, Natsuiro matsuri, Nekomata okayu, Ninomae ina'nis, Ookami mio, Oozora subaru, Sakura miko, Shirakami fubuki, Shiranui flare, Shirogane noel, Takanashi kiara, Tokino sora, Tokoyami towa, Tsunomaki watame, Uruha rushia, Usada pekora, Watson amelia, Yozora mel, Yukihana lamy, Yuzuki choco
 
 You can add your own custom model, add a new model decription in settings.json follow the examples, the training notebook is included in  char-2.ipynb simply download the model and move it to /models. Tutorial will be added soon into the jupyter notebook(char-2.ipynb)
 
@@ -65,15 +64,11 @@ Important Files | Function | Description
 ------------ | ------------- | -------------
 taio.py | Main program | Detect faces categorize it
 cropper.py | Face cropper | Crop faces in images and saves it, used for making models
-char-2.ipynb | Jupyter notebook to train the models | images needs to be separated in a zip file and structured "modelname/train/character" and "modelname/test/character"
+char-5.ipynb | Jupyter notebook to train the models | images needs to be separated in a zip file and structured "modelname/character"
 
 ## TODO
  - Model generalization / submodel detection
    - New detection method, run the image to general model then to the submodel
- - Help argument
- - Handling error when running without argument
- - Matplotlib image load slows down decision making process
- - Overall program optimization
 
 ## Performance
 
