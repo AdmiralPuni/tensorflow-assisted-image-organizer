@@ -113,6 +113,39 @@
                 "Yuuki setsuna"
             ],
             "filename": "model-nijigasaki.hdf5"
+        },
+        "love-live": {
+            "names": [
+                "Asaka karin",
+                "Ayase eli",
+                "Emma verde",
+                "Hoshizora rin",
+                "Koizumi hanayo",
+                "Konoe kanata",
+                "Kousaka honoka",
+                "Kunikida hanamaru",
+                "Kurosawa dia",
+                "Kurosawa ruby",
+                "Matsuura kanan",
+                "Minami kotori",
+                "Miyashita ai",
+                "Nakasu kasumi",
+                "Nishikino maki",
+                "Ohara mari",
+                "Ousaka shizuku",
+                "Sakurauchi riko",
+                "Sonoda umi",
+                "Takami chika",
+                "Takasaki yuu",
+                "Tennouji rina",
+                "Toujou nozomi",
+                "Tsushima yoshiko",
+                "Uehara ayumu",
+                "Watanabe you",
+                "Yazawa nico",
+                "Yuuki setsuna"
+            ],
+            "filename": "model-love-live.hdf5"
         }
     }
 }
