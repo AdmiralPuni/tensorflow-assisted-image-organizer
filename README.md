@@ -67,8 +67,7 @@ cropper.py | Face cropper | Crop faces in images and saves it, used for making m
 char-5.ipynb | Jupyter notebook to train the models | images needs to be separated in a zip file and structured "modelname/character"
 
 ## TODO
- - Model generalization / submodel detection
-   - New detection method, run the image to general model then to the submodel
+ - CBIR method discovered, I'm going to try it and if it's more accurate and easier it will be implemented to a separate program
 
 ## Performance
 
