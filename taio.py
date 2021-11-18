@@ -51,6 +51,24 @@ def load_model(character_count, model_filename):
 
   return model
 
+def print_help():
+  print('Example     : taio.py -i input -o output -m myusu -s')
+  print('Arguments   :')
+  print('-i | Input folder, place your unsorted image here')
+  print('-o | Output folder, sorted images will be moved here')
+  print('-m | Model for character face detection')
+  print('-l | List the models available')
+  print('-s | Supervised decision, you will decide for each image')
+  print('-a | Images will be automaticcaly moved to their folder WARNING: Not very accurate')
+  print('-h | Show this help menu')
+
+#Class to save prediction result
+class prediction:
+  def __init__(self, path, names, image):
+    self.path = path
+    self.names = names
+    self.image = image
+
 def main(argv):
   settings_json = json.load(open('settings.json', 'r'))
   input_directory = ''
@@ -59,26 +77,6 @@ def main(argv):
   supervision = True
   prediction_list = []
 
-  #Class to save prediction result
-  class prediction:
-    def __init__(self, path, names, image):
-      self.path = path
-      self.names = names
-      self.image = image
-
-  def print_help():
-    print('Example     : taio.py -i input -o output -m myusu -s')
-    print('Arguments   :')
-    print('-i | Input folder, place your unsorted image here')
-    print('-o | Output folder, sorted images will be moved here')
-    print('-m | Model for character face detection')
-    print('-l | List the models available')
-    print('-s | Supervised decision, you will decide for each image')
-    print('-a | Images will be automaticcaly moved to their folder WARNING: Not very accurate')
-    print('-h | Show this help menu')
-
-  #Get launch argument
-  #Todo: load large imports after argument check instead of before
   try:
     opts, args = getopt.getopt(argv, "hli:o:m:sa", ["i=", "o=", "m="])
   except getopt.GetoptError:
@@ -117,9 +115,7 @@ def main(argv):
 
   print('Loading model...')
   model = load_model(len(character_names), model_filename)
-  #print(model.summary())
   print("Loading mobilenet...")
-  #module_handle = "models/rcnn/"
   module_handle = "models/mobilenet/"
   detector = hub.load(module_handle).signatures['default']
 
@@ -140,20 +136,15 @@ def main(argv):
       if(classes[0][x] > largest):
         largest = x
     
-    #return the name using the largest index
     return character_names[largest]
 
   #Draw boxes and text on image, I don't know how this works
   def draw_bounding_box_on_image(image, ymin, xmin, ymax, xmax, color, font, thickness=4, display_str_list=()):
     draw = ImageDraw.Draw(image)
     im_width, im_height = image.size
-    (left, right, top, bottom) = (xmin * im_width, xmax * im_width,
-                                  ymin * im_height, ymax * im_height)
+    (left, right, top, bottom) = (xmin * im_width, xmax * im_width, ymin * im_height, ymax * im_height)
     draw.line([(left, top),(right, bottom)], width=thickness, fill=color)
-    draw.line([(left, top), (left, bottom), (right, bottom), (right, top),
-              (left, top)],
-              width=thickness,
-              fill=color)
+    draw.line([(left, top), (left, bottom), (right, bottom), (right, top), (left, top)], width=thickness, fill=color)
     display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
     total_display_str_height = (1 + 2 * 0.05) * sum(display_str_heights)
 
@@ -165,17 +156,10 @@ def main(argv):
     for display_str in display_str_list[::-1]:
       text_width, text_height = font.getsize(display_str)
       margin = np.ceil(0.05 * text_height)
-      draw.rectangle([(left, text_bottom - text_height - 2 * margin),
-                      (left + text_width, text_bottom)],
-                    fill=color)
-      draw.text((left + margin, text_bottom - text_height - margin),
-                display_str,
-                fill="black",
-                font=font)
+      draw.rectangle([(left, text_bottom - text_height - 2 * margin), (left + text_width, text_bottom)], fill=color)
+      draw.text((left + margin, text_bottom - text_height - margin), display_str, fill="black", font=font)
       text_bottom -= text_height - 2 * margin
 
-  #Crop and compare faces
-  #Cannot give imade directly to comparator, save into a temp image
   def crop_and_detect(image, ymin, xmin, ymax, xmax):
     image_pil = image
     im_width, im_height = image_pil.size
@@ -203,7 +187,7 @@ def main(argv):
       if scores[i] >= min_score:
         if class_names[i].decode("ascii") == "Human face":
           ymin, xmin, ymax, xmax = tuple(boxes[i])
-          
+
           image_pil = Image.fromarray(np.uint8(loaded_image)).convert("RGB")
           detected_names.append(crop_and_detect(image_pil, ymin, xmin, ymax, xmax))
 
@@ -221,7 +205,8 @@ def main(argv):
     loaded_image = Image.open(path)
     width, height = loaded_image.size
     ratio_height = height/width
-    loaded_image.resize((1000, round(1000*ratio_height))).save(output_directory + "/temp_load.png")
+    if width >=1000:
+      loaded_image.resize((1000, round(1000*ratio_height))).save(output_directory + "/temp_load.png")
         
     img = tf.io.read_file(output_directory + "/temp_load.png")
     img = tf.image.decode_jpeg(img, channels=3)
@@ -237,12 +222,8 @@ def main(argv):
     result = {key:value.numpy() for key,value in result.items()}
 
     #detect faces>draw box around them> detect the face<repeat >return image with box and detected names
-    image_with_boxes, detected_names = draw_boxes(
-        img.numpy(), result["detection_boxes"],
-        result["detection_class_entities"], result["detection_scores"])
+    image_with_boxes, detected_names = draw_boxes( img.numpy(), result["detection_boxes"], result["detection_class_entities"], result["detection_scores"])
 
-    #Cache the image into a folder to ease matplotlib and tkinter
-    #Todo?: Clear the cache when the program is over
     Image.fromarray(np.uint8(image_with_boxes)).convert("RGB").save(output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
     
     return prediction(path, np.unique(detected_names), output_directory + '/' + 'temp-detected' + '/' + os.path.basename(path))
@@ -321,13 +302,10 @@ def main(argv):
         plt.imshow(load_img(list.image))
         user_decision(list.path, list.names)
 
-  
   #Tkinter gui stuff, miles faster than matplotlib. It works
   def gui():
     root = tk.Tk()
-
-    root.title("Tensorflow Assisted Image Organizer | TAIO v0.1")
-
+    root.title("Tensorflow Assisted Image Organizer | TAIO v1.1")
     def detection_count(detection_correct ,true_count = [], false_count = []):
       if detection_correct:
         true_count.append(0)
@@ -343,7 +321,7 @@ def main(argv):
       current_prediction = prediction_list[index]
       if save:
         detection_count(True)
-        #move_file(current_prediction.path, current_prediction.names, single)
+        move_file(current_prediction.path, current_prediction.names, single)
       else:
         detection_count(False)
       #attempting to treat out of index on last prediction
